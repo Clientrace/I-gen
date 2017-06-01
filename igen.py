@@ -42,8 +42,7 @@ def post_intent(name,msg,response):
     data = json.dumps(intentJson).encode('utf8')
     
     req = urllib.request.Request(BASE_URL+'intents',data,HEADERS)
-    response = urllib.request.urlopen(req)
-    print(response.read())
+    urllib.request.urlopen(req)
     
     
 
@@ -65,6 +64,19 @@ def get_intents():
     
     return response.read()
     
+def display_intents():
+	intents = json.loads(get_intents().decode('utf8'))
+	for intent in intents:
+		print(intent['name'])
+		
+def get_knowledge_db():
+	response = urllib.request.urlopen('https://docs.google.com/spreadsheets/d/17uR1e63BHvNcT9lcjhK70sq3ShOV9OY1tfdvx9vxyx8/export?format=tsv&id=17uR1e63BHvNcT9lcjhK70sq3ShOV9OY1tfdvx9vxyx8&gid=0')
+	open('db.tsv','wb').write(response.read())
+	db = open('db.tsv','r')
+	for line in db:
+		data = line.split('\t')
+		print(data[0])
+    
 
 def lambda_handler(event, context):
     global ACCESS_TOKEN
@@ -79,12 +91,9 @@ def lambda_handler(event, context):
     }
     
     intents = json.loads(get_intents().decode("utf-8"))
-    for intent in intents:
-        print(intent['name'])
         
-    post_intent('sample1','sample message','sample reply')
-    
-    return 'Hello from Lambda'
+    #post_intent('sample1','sample message','sample reply')
+    print(get_knowledge_db())
     
 if __name__ == '__main__':
 	lambda_handler('test','test')
