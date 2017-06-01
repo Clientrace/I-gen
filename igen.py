@@ -1,4 +1,4 @@
-import urllib
+import urllib.request
 import json
 
 global ACCESS_TOKEN
@@ -39,8 +39,11 @@ def post_intent(name,msg,response):
     global HEADERS
     
     intentJson = create_intent(name,msg,response)
+    data = json.dumps(intentJson).encode('utf8')
     
-    
+    req = urllib.request.Request(BASE_URL+'intents',data,HEADERS)
+    response = urllib.request.urlopen(req)
+    print(response.read())
     
     
 
@@ -82,6 +85,9 @@ def lambda_handler(event, context):
     post_intent('sample1','sample message','sample reply')
     
     return 'Hello from Lambda'
+    
+if __name__ == '__main__':
+	lambda_handler('test','test')
     
     
     
